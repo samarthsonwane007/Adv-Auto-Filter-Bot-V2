@@ -4,7 +4,7 @@
 
 from pyrogram import filters, Client
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
-from bot import Translation, LOGGER # pylint: disable=import-error
+from bot import Translation # pylint: disable=import-error
 from bot.database import Database # pylint: disable=import-error
 
 db = Database()
@@ -24,35 +24,77 @@ async def start(bot, update):
             return
         
         caption = file_caption if file_caption != ("" or None) else ("<code>" + file_name + "</code>")
-        try:
-            await update.reply_cached_media(
-                file_id,
-                quote=True,
-                caption = caption,
+        
+        if file_type == "document":
+        
+            await bot.send_document(
+                chat_id=update.chat.id,
+                document = file_id,
+                caption = f"<b>{file_caption}</b>",
+                parse_mode="html",
+                reply_to_message_id=update.message_id,
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton
+                                (
+                                    '🔱Join🔱', url="https://t.me/joinchat/WWbTlXkY4pHDvJFI"
+                                )
+                        ]
+                    ]
+                )
+            )
+
+        elif file_type == "video":
+        
+            await bot.send_video(
+                chat_id=update.chat.id,
+                video = file_id,
+                caption = f"<b>{file_caption}</b>",
                 parse_mode="html",
                 reply_markup=InlineKeyboardMarkup(
                     [
                         [
                             InlineKeyboardButton
                                 (
-                                    'Developers', url="https://t.me/joinchat/r_CIbg-zn5JjZmZl"
+                                    '🔱Join🔱', url="https://t.me/joinchat/WWbTlXkY4pHDvJFI"
                                 )
                         ]
                     ]
                 )
             )
-        except Exception as e:
-            await update.reply_text(f"<b>Error:</b>\n<code>{e}</code>", True, parse_mode="html")
-            LOGGER(__name__).error(e)
+            
+        elif file_type == "audio":
+        
+            await bot.send_audio(
+                chat_id=update.chat.id,
+                audio = file_id,
+                caption = f"<b>{file_caption}</b>",
+                parse_mode="html",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton
+                                (
+                                    '🔱Join🔱', url="https://t.me/joinchat/WWbTlXkY4pHDvJFI"
+                                )
+                        ]
+                    ]
+                )
+            )
+
+        else:
+            print(file_type)
+        
         return
 
     buttons = [[
-        InlineKeyboardButton('Developers', url='https://t.me/joinchat/r_CIbg-zn5JjZmZl'),
-        InlineKeyboardButton('Source Code 🧾', url ='https://t.me/joinchat/r_CIbg-zn5JjZmZl')
+        InlineKeyboardButton('Developers', url='https://t.me/umeshask'),
+        InlineKeyboardButton('', url ='')
     ],[
-        InlineKeyboardButton('Support 🛠', url='https://t.me/joinchat/r_CIbg-zn5JjZmZl')
+        InlineKeyboardButton('Join🔔', url='https://t.me/taless01')
     ],[
-        InlineKeyboardButton('Help ⚙', callback_data="help")
+        InlineKeyboardButton('', callback_data="")
     ]]
     
     reply_markup = InlineKeyboardMarkup(buttons)
